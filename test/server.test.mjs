@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createApp } from '../src/app';
+import 'dotenv/config';
 
-vi.mock('dotenv/config', () => ({}));
 vi.mock('../src/app', () => ({ createApp: vi.fn() }));
 
 describe('server startup', () => {
