@@ -48,7 +48,7 @@ test('product repository delegates all operations to Prisma', async () => {
   });
   await expect(repository.create(data)).resolves.toBe(product);
   expect(prisma.product.create).toHaveBeenLastCalledWith({ data });
-  const update = { quantity: 0, stock: false };
+  const update = { quantity: 0 };
   await expect(repository.update(product.id, update)).resolves.toBe(product);
   expect(prisma.product.update).toHaveBeenLastCalledWith({
     where: { id: product.id },

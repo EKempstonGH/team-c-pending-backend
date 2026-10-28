@@ -8,19 +8,31 @@ datasource db {
 }
 
 model Customer {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  password  String
-  firstName String
-  lastName  String
+  id            Int           @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  email         String        @unique
+  password      String
+  basketEntries BasketEntry[]
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        String
-  price       Float
-  description String
-  category    String
-  quantity    Int
-  image       String?
+  id            Int           @id @default(autoincrement())
+  name          String
+  price         Float
+  description   String
+  category      String
+  quantity      Int
+  image         String?
+  basketEntries BasketEntry[]
+}
+
+model BasketEntry {
+  customerId Int
+  productId  Int
+  quantity   Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@id([customerId, productId])
 }
