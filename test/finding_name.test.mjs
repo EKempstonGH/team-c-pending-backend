@@ -163,6 +163,33 @@ test('database errors are not treated as invalid credentials', async () => {
   await expect(service.getCustomerDetailsFromToken(token)).rejects.toBe(error);
 });
 
+test('customer details use the token customer ID to total basket quantities', async () => {
+  const repository = {
+    findByID: vi.fn().mockResolvedValue({
+      customerID: 42,
+      firstName: 'Alex',
+      lastName: 'Smith',
+      email: 'alex@example.com',
+    }),
+  };
+  const basketService = {
+    getBasket: vi.fn().mockResolvedValue([{ quantity: 2 }, { quantity: 3 }]),
+  };
+  const service = new LoginService(repository, secret);
+  const token = jwt.sign({}, secret, { subject: '42' });
+
+  await expect(
+    service.getCustomerDetailsFromToken(token, basketService),
+  ).resolves.toEqual({
+    firstName: 'Alex',
+    lastName: 'Smith',
+    email: 'alex@example.com',
+    customerId: 42,
+    basketCount: 5,
+  });
+  expect(basketService.getBasket).toHaveBeenCalledExactlyOnceWith(42);
+});
+
 test('getCustomerIDFromToken returns the numeric ID from a valid token', async () => {
   const service = new LoginService({}, secret);
   const token = jwt.sign({}, secret, { subject: '42' });
